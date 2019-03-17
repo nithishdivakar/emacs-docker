@@ -10,4 +10,4 @@ directory is mapped as persistence
 storage inside the container
 
 # Code of evil mode is from 
-https://github.com/emacs-evil/evil]
+https://github.com/emacs-evil/evil
