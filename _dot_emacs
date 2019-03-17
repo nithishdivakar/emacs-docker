@@ -1,0 +1,136 @@
+;; -*- mode: elisp -*-
+
+;; Disable the splash screen (to enable it agin, replace the t with 0)
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+
+(require 'package)
+
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+
+(setq package-enable-at-startup nil)
+(package-initialize)
+
+(add-to-list 'load-path "/home/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)
+
+(setq inhibit-splash-screen t)
+
+;; Enable transient mark mode
+(transient-mark-mode 1)
+
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+
+;;;;Org mode configuration
+;; Enable Org mode
+(require 'org)
+;; Make Org mode work with files ending in .org
+;; (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+;; The above is the default in recent emacsen
+(setq org-todo-keywords
+  '((sequence "TODO" "IN-PROGRESS" "WAITING" "MOVED" "SCHEDULED" "|" "DONE" "CANCELLED")))
+(global-set-key "\C-ca" 'org-agenda)
+
+;;(setq org-log-done 'time)
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(define-key global-map "\C-cc" 'org-capture)
+
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+(setq org-capture-templates
+   (quote 
+     (
+       ("p" "projects")
+       ("pf" "Project1")
+       ("pfl" "Project11"  entry (file+datetree "~/workspace/scheme/project11.org") "** %U - %^{Activity}  :LOG:\n")
+     )
+   )
+)
+
+(setq org-agenda-span 10
+      org-agenda-start-on-weekday nil
+      org-agenda-start-day "-2d")
+      
+;;(custom-set-variables
+;; ;; custom-set-variables was added by Custom.
+;; ;; If you edit it by hand, you could mess it up, so be careful.
+;; ;; Your init file should contain only one such instance.
+;; ;; If there is more than one, they won't work right.
+;; '(org-agenda-files
+;;   (quote
+
+;; Add all files in a folder to ajenda
+(setq org-agenda-files '("~/workspace/scheme/"))
+
+
+;; open ajenda without split if no other window is open
+(defun air-pop-to-org-agenda (split)
+  "Visit the org agenda, in the current window or a SPLIT."
+  (interactive "P")
+  (org-agenda-list)
+  (when (not split)
+    (delete-other-windows)))
+
+(define-key global-map (kbd "C-c t a") 'air-pop-to-org-agenda)
+
+;; insert bkank line before headings
+(setq org-blank-before-new-entry (quote ((heading) (plain-list-item))))
+
+
+;; enfore dependencies between child and parent todo
+(setq org-enforce-todo-dependencies t)
+
+
+;; Refresh ajenda with time.
+(defun renewOrgBuffer ()
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (when (derived-mode-p 'org-agenda-mode)
+    (org-agenda-maybe-redo))))
+  )
+(run-with-idle-timer 3 1000 #'renewOrgBuffer)
+
+
+;; Save all tempfiles in $TMPDIR/emacs$UID/                                                        
+(defconst emacs-tmp-dir (expand-file-name (format "emacs%d" (user-uid)) temporary-file-directory))
+(setq backup-directory-alist
+    `((".*" . ,emacs-tmp-dir)))
+(setq auto-save-file-name-transforms
+    `((".*" ,emacs-tmp-dir t)))
+(setq auto-save-list-file-prefix
+        emacs-tmp-dir)
+
+;; line wrap column
+
+;;(add-hook 'text-mode-hook (lambda() (refill-mode 1)))
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; 55 as column width
+(add-hook 'text-mode-hook '(lambda() (set-fill-column 40)))
+;; full justification by default
+(add-hook 'text-mode-hook (lambda() (setq default-justification 'full)))
+
+;;;; open ajenda when emacs opens
+;;
+;;(org-agenda nil "n")
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (evil-visual-mark-mode))))
+
+(load-theme 'manoj-dark)
