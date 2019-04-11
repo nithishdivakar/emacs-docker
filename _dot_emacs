@@ -35,6 +35,17 @@
 ;; The above is the default in recent emacsen
 (setq org-todo-keywords
   '((sequence "TODO" "IN-PROGRESS" "WAITING" "MOVED" "SCHEDULED" "|" "DONE" "CANCELLED")))
+
+(setq org-todo-keyword-faces
+  '(("TODO" . "red")
+    ("IN-PROGRESS" . "magenta")
+    ("WAITING" . "yellow")
+    ("MOVED" . "blue")
+    ("SCHEDULED" ."white")
+    ("DONE" . "green")
+    ("CANCELLED" . "black")
+))
+
 (global-set-key "\C-ca" 'org-agenda)
 
 ;;(setq org-log-done 'time)
@@ -71,6 +82,17 @@
 ;; '(org-agenda-files
 ;;   (quote
 
+
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-level-1 ((t (:background "yellow" :foreground "black"))))
+ '(org-level-2 ((t (:foreground "white")))))
+
+
 ;; Add all files in a folder to ajenda
 (setq org-agenda-files '("~/workspace/scheme/"))
 
@@ -103,6 +125,7 @@
   )
 (run-with-idle-timer 3 1000 #'renewOrgBuffer)
 
+(setq org-tags-column 50)
 
 ;; Save all tempfiles in $TMPDIR/emacs$UID/                                                        
 (defconst emacs-tmp-dir (expand-file-name (format "emacs%d" (user-uid)) temporary-file-directory))
@@ -125,6 +148,9 @@
 ;;;; open ajenda when emacs opens
 ;;
 ;;(org-agenda nil "n")
+
+;; Hide leading stars
+(setq org-hide-leading-stars t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
